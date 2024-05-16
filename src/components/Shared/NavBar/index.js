@@ -2,15 +2,19 @@
 import React, {useState} from "react";
 import {motion} from "framer-motion";
 import Link from "next/link";
-import {Badge} from "antd";
+import {Badge, Modal} from "antd";
 import {useCart} from "@/context/CartContext";
 import {AiOutlineShoppingCart} from "react-icons/ai";
 import Cart from "@/components/Products/Cart";
+import Login from "@/components/Login/Login";
+import Register from "@/components/Register/Register";
 
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [login, setLogin] = useState(false);
+    const [register, setRegister] = useState(false);
     const {cartItems} = useCart();
 
     const openCart = () => setIsCartOpen(true);
@@ -33,9 +37,12 @@ const Navbar = () => {
                 <div className="hidden md:flex space-x-6">
                     {/* Desktop Navigation */}
                     <NavLink href="/">Home</NavLink>
-                    <NavLink href="/cart">Cart</NavLink>
-                    <NavLink href="/checkout">Checkout</NavLink>
-                    <NavLink href="/about">About</NavLink>
+                    <NavLink href={"#"} onClick={() => {
+                        setLogin(true)
+                    }}>Login</NavLink>
+                    <NavLink href={"#"} onClick={() => {
+                        setRegister(true)
+                    }}>Register</NavLink>
                 </div>
 
                 {/* Cart Icon */}
@@ -82,14 +89,28 @@ const Navbar = () => {
                         className="md:hidden absolute top-full left-0 w-full bg-white p-4 rounded-md shadow-lg"
                     >
                         <NavLink href="/">Home</NavLink>
-                        <NavLink href="/cart">Cart</NavLink>
-                        <NavLink href="/checkout">Checkout</NavLink>
-                        <NavLink href="/about">About</NavLink>
+                        <NavLink onClick={() => {
+                            setLogin(true)
+                        }}>Login</NavLink>
+                        <NavLink onClick={() => {
+                            setRegister(true)
+                        }}>Register</NavLink>
+
                     </motion.div>
                 )}
             </div>
 
             {/* Cart Modal */}
+            <Modal open={login} onCancel={() => {
+                setLogin(false)
+            }}>
+                <Login/>
+            </Modal>
+            <Modal open={register} onCancel={() => {
+                setRegister(false)
+            }}>
+                <Register onClose={()=>{setRegister(false)}}/>
+            </Modal>
 
             {/* Your cart content here */}
             <Cart visible={isCartOpen} onCancel={closeCart}/> {/* Render the cart component */}
@@ -98,9 +119,10 @@ const Navbar = () => {
     );
 };
 
-const NavLink = ({href, children}) => (
+const NavLink = ({href, children, onClick}) => (
     <Link
         href={href}
+        onClick={onClick}
         className="relative group text-gray-800 transition duration-300"
     >
         {children}

@@ -3,31 +3,44 @@
 "use client";
 
 import {useEffect, useState} from 'react';
-import {Card, Carousel, Image, InputNumber, message, Modal, Rate} from 'antd';
+import {Card, Carousel, Image, Input, InputNumber, message, Modal, Rate, Select} from 'antd';
 import {AnimatePresence, motion} from 'framer-motion';
 import {getProducts} from "../../../util";
 import {useCart} from "@/context/CartContext";
-
+const { Search } = Input;
+const {Option} = Select; // For category filter dropdown
 const gridVariants = {
     hidden: {opacity: 0, scale: 0.8}, visible: {opacity: 1, scale: 1},
 };
 
 const ProductGrid = () => {
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
     const {addToCart, dispatch} = useCart(); // Access addToCart and dispatch from context
-    const [products, setProducts] = useState([]);
-    const getProductsFromApi = async () => {
-        const products = await getProducts();
-        console.log("Here are products from api", products)
-        if (products.responseCode === 200) {
-            console.log(products.products)
-            setProducts(products.result.products);
-        } else {
-            message.error("Something went wrong")
-        }
-    }
+    const [allProducts, setAllProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [disabled, setDisabled] = useState(false);
 
+    const getProductsFromApi = async () => {
+        const products = await getProducts();
+        if (products.responseCode === 200) {
+            setAllProducts(products.result.products);
+            setFilteredProducts(products.result.products); // Initially show all products
+        } else {
+            message.error("Something went wrong");
+        }
+    };
+    useEffect(() => {
+        const filtered = allProducts.filter(product => {
+            const matchesCategory = !selectedCategory || product.category === selectedCategory;
+            const matchesSearch = !searchQuery ||
+                product.title.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
+
+        setFilteredProducts(filtered);
+    }, [selectedCategory, searchQuery, allProducts]);
 
     useEffect(() => {
         getProductsFromApi()
@@ -79,11 +92,29 @@ const ProductGrid = () => {
     const handleMouseLeave = () => {
         setHovered(false);
     };
-    useEffect(() => {
-        console.log(quantity)
-    }, [quantity])
+
     return (<div className={"flex flex-col gap-4 items-center w-full justify-center"}>
         <h1 className={"text-4xl font-bold text-center"}>Shop</h1>
+        <div className={"w-4/5 flex flex-row justify-between"}>
+            <Search
+                placeholder="Search products"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: 200, marginBottom: 20 }}
+            />
+            <Select rootClassName={"capitalize"}
+                placeholder="Select a category"
+                value={selectedCategory}
+                onChange={(value) => setSelectedCategory(value)}
+                style={{width: 200, marginBottom: 20}}
+            >
+                <Option value={null}>All</Option>
+                {/* Generate options based on your actual categories */}
+                {[...new Set(allProducts.map(item => item.category))].map((category, index) => (
+                    <Option className={"capitalize"} key={index} value={category}>{category}</Option>
+                ))}
+            </Select>
+        </div>
         <div className={"w-full flex flex-wrap justify-center items-center"}>
 
             <motion.div
@@ -94,7 +125,7 @@ const ProductGrid = () => {
                 animate="visible"
             >
                 <AnimatePresence>
-                    {products?.map((product) => (<motion.div key={product.id} layout>
+                    {filteredProducts?.map((product) => (<motion.div key={product.id} layout>
                         <Card className={"flex flex-col gap-4 drop-shadow-xl"}
                               hoverable
                               style={{width: 240}}
@@ -191,7 +222,13 @@ const ProductGrid = () => {
                             <div className="flex items-center gap-4 mt-4">
                                 <button
                                     className="bg-blue-500 text-white px-4 py-2 rounded"
-                                    onClick={() => addToCart({...selectedProduct, quantity})}
+                                    onClick={
+                                    () => {
+                                        addToCart({...selectedProduct, quantity})
+                                        closeModal()
+                                    }
+                                }
+
                                 >
                                     Add to Cart
                                 </button>

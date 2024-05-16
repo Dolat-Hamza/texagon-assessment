@@ -1,6 +1,8 @@
 import {Button, InputNumber, List, Modal} from 'antd';
 import {AiOutlineClose} from "react-icons/ai";
 import {useCart} from "@/context/CartContext";
+import {useState} from "react";
+import Checkout from "@/components/Products/Checkout";
 
 const cartItemVariants = {
     hidden: {opacity: 0, y: 20},
@@ -10,6 +12,7 @@ const cartItemVariants = {
 
 const Cart = ({visible, onCancel, onRemoveItem}) => {
     const {cartItems, removeFromCart, updateItemQuantity, clearCart, getCartItem} = useCart(); // Access updateItemQuantity
+    const [checkout, setCheckout] = useState(false);
 
     const handleChangeQuantity = (itemId, newQuantity) => {
         updateItemQuantity(itemId, newQuantity);
@@ -25,7 +28,7 @@ const Cart = ({visible, onCancel, onRemoveItem}) => {
                 <Button key="close" onClick={onCancel}>
                     Close
                 </Button>,
-                <Button key="checkout" type="primary" disabled={cartItems.length === 0}>
+                <Button onClick={()=>setCheckout(true)} key="checkout" type="primary" disabled={cartItems.length === 0}>
                     Checkout
                 </Button>,
                 <Button key="clear" onClick={clearCart}>
@@ -76,6 +79,9 @@ const Cart = ({visible, onCancel, onRemoveItem}) => {
                     </List.Item>
                 )}
             />
+            <Modal open={checkout} onCancel={ () => setCheckout(false)} footer={null}>
+                <Checkout/>
+            </Modal>
         </Modal>
     );
 };
