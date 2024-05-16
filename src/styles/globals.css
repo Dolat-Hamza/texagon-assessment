@@ -15,7 +15,13 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+.nav-link:hover {
+  box-shadow: 0 4px 8px rgba(38, 99, 235, 0.2); /* Blue glow */
+}
 
+.nav-link:hover > span {
+  background-color: #FF6347; /* Tomato color for underline */
+}
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
