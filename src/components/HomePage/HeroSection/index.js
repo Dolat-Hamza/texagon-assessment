@@ -1,18 +1,35 @@
-import React from "react";
-import {Button, Carousel} from "antd";
-import { BiChevronRight } from "react-icons/bi";
-import { motion } from "framer-motion"; // Import Framer Motion
+import React, {useEffect, useState} from "react";
+import {Button, Carousel, message} from "antd";
+import {BiChevronRight} from "react-icons/bi";
 import Image from "next/image";
+import {getProductByLimit} from "../../../../util";
+
 const HeroSection = () => {
     const imageData = [
-        { src: "/images/image.svg", alt: "Shoe 1" },
-        { src: "/images/shoe2.svg", alt: "Shoe 2" },
-        { src: "/images/image.svg", alt: "Shoe 3" },
+        {src: "/images/image.svg", alt: "Shoe 1"},
+        {src: "/images/shoe2.svg", alt: "Shoe 2"},
+        {src: "/images/image.svg", alt: "Shoe 3"},
     ];
     const cardVariants = {
-        hidden: { opacity: 0, y: 20 }, // Initial state: invisible, slightly elevated
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }, // Fade in and move up
-        hover: { scale: 1.05 }, // Slightly enlarge on hover
+        hidden: {opacity: 0, y: 20}, // Initial state: invisible, slightly elevated
+        visible: {opacity: 1, y: 0, transition: {duration: 0.5}}, // Fade in and move up
+        hover: {scale: 1.05}, // Slightly enlarge on hover
+    };
+    const [products, setProducts] = useState([]);
+    const getProductsFromApi = async () => {
+        const response = await getProductByLimit(3);
+        if (response.responseCode === 200) {
+            setProducts(response.result);
+        } else {
+            message.error("Something went wrong");
+        }
+    }
+    useEffect(() => {
+        getProductsFromApi();
+    }, []);
+    const gridVariants = {
+        hidden: {opacity: 0, scale: 0.8},
+        visible: {opacity: 1, scale: 1},
     };
     return (
         <div
@@ -57,42 +74,43 @@ const HeroSection = () => {
                     </Carousel>
                 </div>
             </div>
-            <div className="flex w-full h-full flex-row items-center justify-center mx-auto mt-12">
-                <motion.div
-                    initial="hidden" // Set the initial animation state
-                    whileInView="visible" // Trigger animation when in viewport
-                    viewport={{once: true}} // Animate only once
-                    className="flex-row flex gap-8 w-full h-full items-center justify-center "
-                >
-                    {/* Map through shoe data to create multiple cards */}
-                    {[...Array(3)].map((_, index) => (
-                        <motion.div
-                            key={index}
-                            variants={cardVariants}
-                            whileHover="hover" // Trigger hover animation
-                            className="bg-white rounded-lg shadow-md px-7 py-4 flex flex-col gap-4  items-center"
-                        >
-                            <Image
-                                width={200}
-                                height={200}
-                                src="https://img.freepik.com/free-photo/ice-coffee-with-whipped-cream_144627-3801.jpg?t=st=1715847651~exp=1715851251~hmac=5de1037002f3906dc17355fe01ee616da9fa5b0596b486a34733579fffb95897&w=740"
-                                alt={`Shoe ${index + 1}`}
-                                className="rounded-full object-cover shadow-xl drop-shadow"
-                            />
-                            <p className="text-gray-600 font-semibold">Mauris Porta</p>
-                            <p className="text-gray-800 font-bold text-lg">$322.99</p>
-                            <Button
-                                type="primary"
-                                size="small"
-                                className="mt-2"
-                            >
-                                +
-                            </Button>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            </div>
-            {/* Additional Shoe Cards (Optional) */}
+            {/*<div className="flex w-full h-full flex-row items-center justify-center mx-auto mt-12">*/}
+            {/*    <motion.div*/}
+            {/*        layout*/}
+            {/*        className="flex flex-wrap w-4/5 justify-center items-center gap-4 p-4"*/}
+            {/*        variants={gridVariants}*/}
+            {/*        initial="hidden"*/}
+            {/*        animate="visible"*/}
+            {/*    >*/}
+            {/*        <AnimatePresence>*/}
+            {/*            {products?.map((product) => (*/}
+            {/*                <motion.div key={product.id} layout>*/}
+            {/*                    <Card className={"flex flex-col gap-4 drop-shadow-xl"}*/}
+            {/*                          hoverable*/}
+            {/*                          style={{width: 240}}*/}
+            {/*                          cover={*/}
+            {/*                              <img*/}
+            {/*                                  style={{objectFit: 'cover', width: '100%', height: 240}}*/}
+            {/*                                  alt={product.name}*/}
+
+            {/*                                  src={product.image}*/}
+            {/*                              />*/}
+            {/*                          }*/}
+
+            {/*                    >*/}
+            {/*                        <Card.Meta className={"flex flex-col gap-3"}*/}
+            {/*                                   title={product.title}*/}
+            {/*                                   description={`$${product.price}`}/>*/}
+            {/*                        <div className={"flex flex-row gap-3"}><Rate disabled*/}
+            {/*                                                                     defaultValue={product.rating.rate}/>*/}
+            {/*                            <p>{product.rating.count}</p></div>*/}
+
+            {/*                    </Card>*/}
+            {/*                </motion.div>*/}
+            {/*            ))}*/}
+            {/*        </AnimatePresence>*/}
+            {/*    </motion.div>*/}
+            {/*</div>*/}
 
         </div>
     );

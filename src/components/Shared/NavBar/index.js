@@ -1,16 +1,27 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+// components/Navbar.jsx
+import React, {useState} from "react";
+import {motion} from "framer-motion";
 import Link from "next/link";
+import {Badge} from "antd";
+import {useCart} from "@/context/CartContext";
+import {AiOutlineShoppingCart} from "react-icons/ai";
+import Cart from "@/components/Products/Cart";
+
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const {cartItems} = useCart();
+
+    const openCart = () => setIsCartOpen(true);
+    const closeCart = () => setIsCartOpen(false);
 
     return (
         <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="sticky top-0 z-50 bg-white shadow-md backdrop-blur-lg" // Blur effect
+            initial={{opacity: 0, y: -20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
+            className="sticky top-0 z-50 bg-white shadow-md backdrop-blur-lg"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
                 <Link href="/public">
@@ -26,6 +37,11 @@ const Navbar = () => {
                     <NavLink href="/checkout">Checkout</NavLink>
                     <NavLink href="/about">About</NavLink>
                 </div>
+
+                {/* Cart Icon */}
+                <Badge count={cartItems.length} showZero onClick={openCart}>
+                    <AiOutlineShoppingCart style={{fontSize: 24}}/>
+                </Badge>
 
                 {/* Mobile Menu Button */}
                 <button
@@ -60,9 +76,9 @@ const Navbar = () => {
                 {/* Mobile Menu */}
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{opacity: 0, y: -20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.3}}
                         className="md:hidden absolute top-full left-0 w-full bg-white p-4 rounded-md shadow-lg"
                     >
                         <NavLink href="/">Home</NavLink>
@@ -72,21 +88,28 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </div>
+
+            {/* Cart Modal */}
+
+            {/* Your cart content here */}
+            <Cart visible={isCartOpen} onCancel={closeCart}/> {/* Render the cart component */}
+
         </motion.nav>
     );
 };
 
-const NavLink = ({ href, children }) => (
+const NavLink = ({href, children}) => (
     <Link
         href={href}
-        className="relative group text-gray-800 transition duration-300" // Add group class
+        className="relative group text-gray-800 transition duration-300"
     >
         {children}
         <motion.span
             className="absolute bottom-0 left-0 w-full h-[2px] bg-blue-500 origin-left scale-x-0 transform group-hover:scale-x-100 transition-transform duration-300"
         />
     </Link>
-
 );
 
+
 export default Navbar;
+
