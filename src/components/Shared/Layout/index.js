@@ -8,12 +8,12 @@ const Layout = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col overflow-hidden min-h-screen">
             {/* Navbar */}
             <Navbar isOpen={isOpen} setIsOpen={setIsOpen} />
 
             {/* Main Content (Pages) */}
-            <main className="flex-grow flex flex-col items-center w-full ">
+            <main className="flex-grow flex flex-col overflow-auto h-full  w-full ">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
