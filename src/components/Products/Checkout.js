@@ -1,8 +1,6 @@
-// components/Checkout.jsx
-
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import {useCart} from "@/context/CartContext";
+import { useCart } from "@/context/CartContext";
 
 const Checkout = () => {
     const [form] = Form.useForm();
@@ -12,18 +10,31 @@ const Checkout = () => {
     const onFinish = async (values) => {
         setLoading(true);
         try {
-            // Send order data to your backend API for processing here
-            // You'll need to replace this with your actual API call
+            const token = localStorage.getItem("token"); // Replace with your JWT token
+            const apiUrl = '/api/checkout'; // Assuming your API endpoint is at /api/checkout
 
-            console.log('Order Data:', {
-                customerInfo: values,
-                cartItems: cartItems,
+            console.log("Here are the values ", values);
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    cart: cartItems,
+                    customerInfo: values, // No need to parse values, it's already an object
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error('Error placing order. Please try again.');
+            }
 
             message.success('Order placed successfully!');
             clearCart(); // Clear the cart after successful checkout
         } catch (error) {
-            message.error('Error placing order. Please try again.');
+            message.error(error.message || 'Error placing order. Please try again.');
             console.error(error);
         } finally {
             setLoading(false);

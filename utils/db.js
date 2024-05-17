@@ -26,3 +26,13 @@ export const getUserByEmail = (email) => {
     const users = getUsers();
     return users.find(user => user.email === email);
 };
+
+export const addCartData = (email, cartData) => {
+    const users = getUsers();
+    const userIndex = users.findIndex(user => user.email === email);
+
+    if (userIndex !== -1) {
+        users[userIndex].cart = cartData;
+        fs.writeFileSync(dbFilePath, JSON.stringify(users));
+    }
+};
