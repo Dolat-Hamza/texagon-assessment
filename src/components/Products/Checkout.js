@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useCart } from "@/context/CartContext";
 
-const Checkout = () => {
+const Checkout = ({onClose}) => {
     const [form] = Form.useForm();
     const { cartItems, clearCart } = useCart();
     const [loading, setLoading] = useState(false);
@@ -32,7 +32,11 @@ const Checkout = () => {
             }
 
             message.success('Order placed successfully!');
+
             clearCart(); // Clear the cart after successful checkout
+            if(onClose){
+                onClose();
+            }
         } catch (error) {
             message.error(error.message || 'Error placing order. Please try again.');
             console.error(error);

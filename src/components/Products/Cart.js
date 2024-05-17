@@ -40,8 +40,8 @@ const Cart = ({visible, onCancel, onRemoveItem}) => {
                 itemLayout="horizontal"
                 dataSource={cartItems}
                 renderItem={(item) => (
-                    <List.Item
-                        children={
+                    <List.Item>
+
                             <div className={"flex flex-row gap-6 items-center justify-between w-full "}>
                                 <img src={item.thumbnail} width={200} className={"rounded-2xl"}/>
                                 <div className={"capitalize flex flex-col gap-3"}>
@@ -71,16 +71,16 @@ const Cart = ({visible, onCancel, onRemoveItem}) => {
                                     </div>
                                 </div>
                             </div>
-                        }
 
-                    >
+
+
 
 
                     </List.Item>
                 )}
             />
             <Modal open={checkout} onCancel={ () => setCheckout(false)} footer={null}>
-                <Checkout/>
+                <Checkout onCancel={ () => setCheckout(false)}/>
             </Modal>
         </Modal>
     );
