@@ -24,8 +24,6 @@ The Login API enables existing users to authenticate themselves by providing the
 
 ## Checkout API
 
-**Postman Screenshot:**
-_(Not provided in the original request. It's recommended to include a screenshot for consistency.)_
 
 **Response:**
 
