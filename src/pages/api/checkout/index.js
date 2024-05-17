@@ -1,8 +1,15 @@
-import {verifyToken} from "../../../../utils/jwt";
-import {addCartData, getUserByEmail} from "../../../../utils/db";
+import { verifyToken } from "../../../../utils/jwt";
+import { addCartData, getUserByEmail } from "../../../../utils/db";
 
 export default function handler(req, res) {
     if (req.method === 'POST') {
+        const allowedOrigins = ['http://localhost:3000', 'https://texagon-assessment.vercel.app']; // Update with your frontend's origins
+        const origin = req.headers.origin;
+
+        if (allowedOrigins.includes(origin)) {
+            res.setHeader('Access-Control-Allow-Origin', origin);
+        }
+
         const token = req.headers.authorization?.split(' ')[1];
 
         if (!token) {
@@ -26,7 +33,7 @@ export default function handler(req, res) {
         if (!cart) {
             return res.status(400).json({ error: 'Cart data is required' });
         }
-        console.log(cart)
+
         addCartData(user.email, cart);
 
         return res.status(200).json({ message: 'Checkout successful' });

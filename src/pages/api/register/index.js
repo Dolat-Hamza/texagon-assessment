@@ -1,10 +1,17 @@
-import {addUser, userExists} from "../../../../utils/db";
-import {generateToken} from "../../../../utils/jwt";
+import { addUser, userExists } from "../../../../utils/db";
+import { generateToken } from "../../../../utils/jwt";
 
 export default function handler(req, res) {
     if (req.method === 'POST') {
+        const allowedOrigins = ['http://localhost:3000', 'https://texagon-assessment.vercel.app']; // Update with your frontend's origins
+        const origin = req.headers.origin;
+
+        if (allowedOrigins.includes(origin)) {
+            res.setHeader('Access-Control-Allow-Origin', origin);
+        }
+
         const { username, email, password } = req.body;
-        console.log(req.body)
+
         if (!username || !email || !password) {
             return res.status(400).json({ error: 'Name, email, and password are required' });
         }
@@ -17,7 +24,6 @@ export default function handler(req, res) {
         addUser(newUser);
 
         const token = generateToken({ email });
-        console.log(token)
 
         return res.status(201).json({ token });
     } else {
