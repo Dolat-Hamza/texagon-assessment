@@ -9,7 +9,7 @@ const Layout = ({children}) => {
 
     return (
         <div className="flex flex-col overflow-hidden min-h-screen">
-
+            <title>Texagon Assessment</title>
             {/* Navbar */}
             <Navbar isOpen={isOpen} setIsOpen={setIsOpen}/>
 

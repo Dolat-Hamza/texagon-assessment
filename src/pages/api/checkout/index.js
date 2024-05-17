@@ -2,14 +2,18 @@ import { verifyToken } from "../../../../utils/jwt";
 import { addCartData, getUserByEmail } from "../../../../utils/db";
 
 export default function handler(req, res) {
+    // Enable CORS for all routes
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (req.method === 'OPTIONS') {
+        // Preflight request, respond with 200
+        res.status(200).end();
+        return;
+    }
+
     if (req.method === 'POST') {
-        const allowedOrigins = ['http://localhost:3000', 'https://texagon-assessment.vercel.app']; // Update with your frontend's origins
-        const origin = req.headers.origin;
-
-        if (allowedOrigins.includes(origin)) {
-            res.setHeader('Access-Control-Allow-Origin', origin);
-        }
-
         const token = req.headers.authorization?.split(' ')[1];
 
         if (!token) {
