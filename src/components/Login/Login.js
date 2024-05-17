@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import {AiFillLock, AiOutlineLock, AiOutlineUser} from "react-icons/ai";
 import {useAuth} from "@/context/AuthContext";
 
-const Login = () => {
+const Login = ({onClose}) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
@@ -14,12 +14,9 @@ const Login = () => {
         setLoading(true);
         try {
             const success = await login(values); // Replace with your authentication logic
-
-            if (success) {
-                message.success(`Welcome back, ${values.username}!`);
-                // You might want to redirect to a dashboard or display cart summary here
-            } else {
-                message.error('Invalid username or password.');
+            console.log(success)
+            if (onClose) {
+                onClose();
             }
         } catch (error) {
             message.error('An error occurred during login. Please try again.');
@@ -49,7 +46,7 @@ const Login = () => {
             <Form form={form} onFinish={onFinish} layout="vertical">
                 <Form.Item
                     label="Username"
-                    name="username"
+                    name="email"
                     rules={[{ required: true, message: 'Please input your username!' }]}
                 >
                     <Input prefix={<AiOutlineUser />} placeholder="Username" />

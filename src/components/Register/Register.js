@@ -15,7 +15,9 @@ const Register = ({onClose}) => {  // Accept onClose prop    const [form] = Form
 
         try {
             const response = await fetch('/api/register', {
-                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(values),
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(values),
             });
 
             if (response.ok) {
@@ -25,9 +27,6 @@ const Register = ({onClose}) => {  // Accept onClose prop    const [form] = Form
                 // Close if onClose is provided
                 if (onClose) {
                     onClose();
-                } else {
-                    // Handle case where onClose is not provided (e.g., standalone component)
-                    // You could redirect to the login page, display a message, etc.
                 }
             } else {
                 const errorData = await response.json();

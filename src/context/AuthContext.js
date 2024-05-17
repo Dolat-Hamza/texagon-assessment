@@ -23,8 +23,9 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (values) => {
+        console.log(values)
         try {
-            const response = await fetch('/api/login/route', {
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values),
@@ -68,7 +69,7 @@ const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        setUser(null);
+
         setIsAuthenticated(false);
     };
 

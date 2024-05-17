@@ -8,6 +8,7 @@ import {AiOutlineShoppingCart} from "react-icons/ai";
 import Cart from "@/components/Products/Cart";
 import Login from "@/components/Login/Login";
 import Register from "@/components/Register/Register";
+import {useAuth} from "@/context/AuthContext";
 
 
 const Navbar = () => {
@@ -19,6 +20,14 @@ const Navbar = () => {
 
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
+    const {isAuthenticated,logout} = useAuth();
+    console.log(isAuthenticated)
+
+
+    function LogoutUser() {
+        logout()
+        // console.log("Yolo")
+    }
 
     return (
         <motion.nav
@@ -37,12 +46,15 @@ const Navbar = () => {
                 <div className="hidden md:flex space-x-6">
                     {/* Desktop Navigation */}
                     <NavLink href="/">Home</NavLink>
-                    <NavLink href={"#"} onClick={() => {
-                        setLogin(true)
-                    }}>Login</NavLink>
-                    <NavLink href={"#"} onClick={() => {
-                        setRegister(true)
-                    }}>Register</NavLink>
+                    {isAuthenticated ? (
+                        <NavLink href="#" onClick={()=>{
+                           LogoutUser()}}>Logout</NavLink>
+                    ) : (
+                        <NavLink href={"#"} onClick={() => setLogin(true)}>Login</NavLink>
+                    )}
+                    {!isAuthenticated && (
+                        <NavLink href={"#"} onClick={() => setRegister(true)}>Register</NavLink>
+                    )}
                 </div>
 
                 {/* Cart Icon */}
@@ -83,33 +95,40 @@ const Navbar = () => {
                 {/* Mobile Menu */}
                 {isOpen && (
                     <motion.div
-                        initial={{opacity: 0, y: -20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{duration: 0.3}}
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
                         className="md:hidden absolute top-full left-0 w-full bg-white p-4 rounded-md shadow-lg"
                     >
                         <NavLink href="/">Home</NavLink>
-                        <NavLink onClick={() => {
-                            setLogin(true)
-                        }}>Login</NavLink>
-                        <NavLink onClick={() => {
-                            setRegister(true)
-                        }}>Register</NavLink>
-
+                        {isAuthenticated ? (
+                            <NavLink href="#" onClick={()=>{
+                                LogoutUser()}}>Logout</NavLink>
+                        ) : (
+                            <NavLink href={"#"} onClick={() => setLogin(true)}>Login</NavLink>
+                        )}
+                        {!isAuthenticated && (
+                            <NavLink href={"#"} onClick={() => setRegister(true)}>Register</NavLink>
+                        )}
                     </motion.div>
                 )}
             </div>
 
             {/* Cart Modal */}
+
             <Modal open={login} onCancel={() => {
                 setLogin(false)
             }}>
-                <Login/>
+                <Login onClose={() => {
+                    setLogin(false)
+                }}/>
             </Modal>
             <Modal open={register} onCancel={() => {
                 setRegister(false)
             }}>
-                <Register onClose={()=>{setRegister(false)}}/>
+                <Register onClose={() => {
+                    setRegister(false)
+                }}/>
             </Modal>
 
             {/* Your cart content here */}
